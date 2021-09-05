@@ -16,6 +16,7 @@ export const ExternalApiComponent = () => {
 
   const {
     user,
+    userId,
     getAccessTokenSilently,
     loginWithPopup,
     getAccessTokenWithPopup,
@@ -57,13 +58,17 @@ export const ExternalApiComponent = () => {
 
   const callApi = async () => {
     try {
-      console.log(user.user_id);
+      console.log(user);
+      console.log(userId);
       const token = await getAccessTokenSilently();
 
-      const response = await fetch(`${apiOrigin}/api/ex/google-oauth2|106534507904951475982`, {
+      const response = await fetch(`${apiOrigin}/api/external/${user.sub}`, {
+        method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
+        body: JSON.stringify({"testing" : "moretesting"}),
       });
 
       const responseData = await response.json();

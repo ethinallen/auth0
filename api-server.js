@@ -27,6 +27,7 @@ if (
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors({ origin: appOrigin }));
+app.use(express.json());
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
@@ -41,27 +42,22 @@ const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
-app.get("/api/external", checkJwt, (req, res) => {
-  res.send({
-    msg: "Your access token was successfully validated!",
-  });
-});
-
-app.get("/api/ex/:id", (req, res) => {
+app.post("/api/external/:id", checkJwt, (req, res) => {
+  console.log(req.body);
   var axios = require("axios").default;
 
-var options = {
-  method: 'PATCH',
-  url: `https://${authConfig.domain}/api/v2/users/${req.params.id}`,
-  headers: {authorization: 'Bearer YOUR_ACCESS_TOKEN', 'content-type': 'application/json'},
-  data: '{"user_metadata": {"displayName": "dingle dangle"}'
-};
+  var options = {
+    method: 'PATCH',
+    url: `https://${authConfig.domain}/api/v2/users/${req.params.id}`,
+    headers: {authorization: `Bearer ${authConfig.token}`, 'content-type': 'application/json'},
+    data: {user_metadata: req.body}
+  };
 
-axios.request(options).then(function (response) {
-  console.log(response.data);
-}).catch(function (error) {
-  console.error(error);
-});
+  axios.request(options).then(function (response) {
+    console.log(response.data);
+  }).catch(function (error) {
+    console.error(error);
+  });
 });
 
 app.listen(port, () => console.log(`API Server listening on port ${port}`));
