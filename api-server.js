@@ -4,18 +4,17 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const jwt = require("express-jwt");
 const jwksRsa = require("jwks-rsa");
-const authConfig = require("./src/auth_config.json");
 
 const app = express();
 
 const port = process.env.API_PORT || 3001;
 const appPort = process.env.SERVER_PORT || 3000;
-const appOrigin = authConfig.appOrigin || `http://localhost:${appPort}`;
+const appOrigin = process.env.appOrigin || `http://localhost:${appPort}`;
 
 if (
-  !authConfig.domain ||
-  !authConfig.audience ||
-  authConfig.audience === "YOUR_API_IDENTIFIER"
+  !process.env.AUTH0_DOMAIN ||
+  !process.env.AUTH0_AUDIENCE ||
+  process.env.AUTH0_AUDIENCE === "YOUR_API_IDENTIFIER"
 ) {
   console.log(
     "Exiting: Please make sure that auth_config.json is in place and populated with valid domain and audience values"
@@ -34,11 +33,11 @@ const checkJwt = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`,
+    jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
   }),
 
-  audience: authConfig.audience,
-  issuer: `https://${authConfig.domain}/`,
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
   algorithms: ["RS256"],
 });
 
@@ -48,8 +47,8 @@ app.post("/api/external/:id", checkJwt, (req, res) => {
 
   var options = {
     method: 'PATCH',
-    url: `https://${authConfig.domain}/api/v2/users/${req.params.id}`,
-    headers: {authorization: `Bearer ${authConfig.token}`, 'content-type': 'application/json'},
+    url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${req.params.id}`,
+    headers: {authorization: `Bearer ${process.env.AUTH0_TOKEN}`, 'content-type': 'application/json'},
     data: {user_metadata: req.body}
   };
 
