@@ -1,4 +1,3 @@
-
 export function getConfig() {
   // Configure the audience here. By default, it will take whatever is in the config
   // (specified by the `audience` key) unless it's the default value of "YOUR_API_IDENTIFIER" (which
@@ -9,7 +8,7 @@ export function getConfig() {
   const audience =
     process.env.AUTH0_AUDIENCE && process.env.AUTH0_AUDIENCE !== "YOUR_API_IDENTIFIER"
       ? process.env.AUTH0_AUDIENCE
-      : "TESTING";
+      : "null";
 
   return {
     domain: process.env.AUTH0_DOMAIN,
