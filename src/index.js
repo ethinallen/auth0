@@ -16,11 +16,11 @@ const onRedirectCallback = (appState) => {
 // Please see https://auth0.github.io/auth0-react/interfaces/auth0_provider.auth0provideroptions.html
 // for a full list of the available properties on the provider
 // const config = getConfig();
-console.log({"DOMAIN":process.env.AUTH0_DOMAIN});
+console.log(process.env.REACT_APP_AUTH0_DOMAIN);
 const providerConfig = {
-  domain: process.env.AUTH0_DOMAIN,
-  clientId: process.env.AUTH0_CLIENT_ID,
-  audience: process.env.AUDIENCE,
+  domain: process.env.REACT_APP_AUTH0_DOMAIN,
+  clientId: process.env.REACT_APP_AUTH0_CLIENT_ID,
+  audience: process.env.REACT_APP_AUDIENCE,
   redirectUri: window.location.origin,
   onRedirectCallback,
 };
