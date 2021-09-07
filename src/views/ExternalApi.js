@@ -17,7 +17,6 @@ export const ExternalApiComponent = () => {
   const { apiOrigin = "https://ec2-18-222-3-115.us-east-2.compute.amazonaws.com:3001", audience } = getConfig();
 
 
-
   const [userMetadata, setUserMetadata] = useState(null);
   const [pizza , setPizza] = useState(null);
 
@@ -197,7 +196,7 @@ export const ExternalApiComponent = () => {
         {userMetadata ? (
           <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
         ) : (
-          <pre>"No Pizza Orders (yet!)"</pre>
+          <pre>No Pizza Orders (yet!)</pre>
         )}
 
         {!audience && (
