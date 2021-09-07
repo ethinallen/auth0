@@ -18,8 +18,6 @@ import "./App.css";
 import initFontAwesome from "./utils/initFontAwesome";
 initFontAwesome();
 
-console.log(process.env);
-
 const App = () => {
   const { isLoading, error } = useAuth0();
 

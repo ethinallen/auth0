@@ -16,7 +16,15 @@ export const ExternalApiComponent = () => {
   } = useAuth0();
   const { apiOrigin = "https://ec2-18-222-3-115.us-east-2.compute.amazonaws.com:3001", audience } = getConfig();
 
+
+
   const [userMetadata, setUserMetadata] = useState(null);
+  const [pizza , setPizza] = useState('Insert Pizza Here');
+
+  const handleChange =(e)=>{
+      setPizza(e.target.value);
+    }
+
   useEffect(() => {
   const getUserMetadata = async () => {
     const domain = process.env.REACT_APP_AUTH0_DOMAIN;
@@ -51,7 +59,9 @@ export const ExternalApiComponent = () => {
     error: null,
   });
 
-
+  const handleSubmit=(e)=>{
+    callTestApi();
+  }
 
   const handleConsent = async () => {
     try {
@@ -90,9 +100,6 @@ export const ExternalApiComponent = () => {
   const callApi = async () => {
     try {
       const token = await getAccessTokenSilently();
-      console.log(token);
-
-      console.log(apiOrigin);
 
       const response = await fetch(`${apiOrigin}/api/external/${user.sub}`, {
         method: 'POST',
@@ -120,12 +127,10 @@ export const ExternalApiComponent = () => {
 
 
   const callTestApi = async () => {
-
     const accessToken = await getAccessTokenSilently({
       audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
     });
 
-    console.log(process.env.REACT_APP_AUTH0_DOMAIN);
 
     const domain = process.env.REACT_APP_AUTH0_DOMAIN;
     var axios = require("axios").default;
@@ -133,7 +138,7 @@ export const ExternalApiComponent = () => {
       method: 'PATCH',
       url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
       headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
-      data: {user_metadata: { "user_metadata" : { "PLEASE DEAR CHRIST LET IT STOP": {"I AM ALMOST OUT": "OF TRADER JOES ICED COFFEE"} }}}
+      data: {user_metadata: { "user_metadata" : {"wantsPizza" : pizza} }}
     };
 
 
@@ -248,13 +253,23 @@ export const ExternalApiComponent = () => {
           </Alert>
         )}
 
+
+
+        <form onSubmit={callTestApi}>
+          <label >
+          Name:
+          </label><br/>
+          <input type="text" value={pizza} required onChange={(e)=> {handleChange(e)}} /><br/>
+
+        </form>
+
         <Button
           color="primary"
           className="mt-5"
           onClick={callTestApi}
           disabled={!audience}
         >
-          Ping API
+          Order Pizza
         </Button>
       </div>
 
