@@ -34,13 +34,11 @@ export const ExternalApiComponent = () => {
       });
 
       const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
-      console.log({"userDetails" : userDetailsByIdUrl});
       const metadataResponse = await fetch(userDetailsByIdUrl, {
         headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
       });
 
       const { user_metadata } = await metadataResponse.json();
-      console.log({"USER_METADATA" : user_metadata});
       setUserMetadata(user_metadata);
     } catch (e) {
       console.log(e.message);
