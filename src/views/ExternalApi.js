@@ -136,7 +136,7 @@ export const ExternalApiComponent = () => {
       method: 'PATCH',
       url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
       headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
-      data: {user_metadata: { "user_metadata" : {"wantsPizza" : pizza} }}
+      data: {user_metadata: {{"pizzaPreference" : pizza}}
     };
 
 
