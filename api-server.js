@@ -41,10 +41,8 @@ const checkJwt = jwt({
   algorithms: ["RS256"],
 });
 
-app.post("/api/external/:id", checkJwt, (req, res) => {
-  console.log(req.body);
+app.post("/api/external/:id", (req, res) => {
   var axios = require("axios").default;
-
   var options = {
     method: 'PATCH',
     url: `https://${process.env.AUTH0_DOMAIN}/api/v2/users/${req.params.id}`,

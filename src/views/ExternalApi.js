@@ -6,7 +6,9 @@ import { getConfig } from "../config";
 import Loading from "../components/Loading";
 
 export const ExternalApiComponent = () => {
-  const { apiOrigin = "http://localhost:3001", audience } = getConfig();
+  const { apiOrigin = "https://ec2-18-222-3-115.us-east-2.compute.amazonaws.com:3001", audience } = getConfig();
+
+  const [userMetadata, setUserMetadata] = useState(null);
 
   const [state, setState] = useState({
     showResult: false,
@@ -58,9 +60,10 @@ export const ExternalApiComponent = () => {
 
   const callApi = async () => {
     try {
-      console.log(user);
-      console.log(userId);
       const token = await getAccessTokenSilently();
+      console.log(token);
+
+      console.log(apiOrigin);
 
       const response = await fetch(`${apiOrigin}/api/external/${user.sub}`, {
         method: 'POST',
@@ -68,7 +71,7 @@ export const ExternalApiComponent = () => {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({"testing" : "moretesting"}),
+        body: JSON.stringify({"wantsPizza" : "1"}),
       });
 
       const responseData = await response.json();
@@ -84,6 +87,33 @@ export const ExternalApiComponent = () => {
         error: error.error,
       });
     }
+  };
+
+
+  const callTestApi = async () => {
+
+    const accessToken = await getAccessTokenSilently({
+      audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
+      scope: "update:users_app_metadata",
+    });
+
+    console.log(process.env.REACT_APP_AUTH0_DOMAIN);
+
+    const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+    var axios = require("axios").default;
+    var options = {
+      method: 'PATCH',
+      url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
+      headers: {authorization: `Bearer ${accessToken}`, 'content-type': 'application/json'},
+      data: {user_metadata: { "user_metadata" : { "POEMS": {"TEST_POEM": "I ONCE WROTE A LIMERICK"} }}}
+    };
+
+    axios.request(options).then(function (response) {
+      console.log(response.data);
+    }).catch(function (error) {
+      console.error(error);
+    });
+
   };
 
   const handle = (e, fn) => {
@@ -131,6 +161,13 @@ export const ExternalApiComponent = () => {
           of the request's `Authorization` header and the API will validate it
           using the API's audience value.
         </p>
+
+        <h3>User Metadata</h3>
+        {userMetadata ? (
+          <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
+        ) : (
+          "No user metadata defined"
+        )}
 
         {!audience && (
           <Alert color="warning">
@@ -181,7 +218,7 @@ export const ExternalApiComponent = () => {
         <Button
           color="primary"
           className="mt-5"
-          onClick={callApi}
+          onClick={callTestApi}
           disabled={!audience}
         >
           Ping API
