@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Alert } from "reactstrap";
 import Highlight from "../components/Highlight";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
@@ -6,15 +6,6 @@ import { getConfig } from "../config";
 import Loading from "../components/Loading";
 
 export const ExternalApiComponent = () => {
-  const { apiOrigin = "https://ec2-18-222-3-115.us-east-2.compute.amazonaws.com:3001", audience } = getConfig();
-
-  const [userMetadata, setUserMetadata] = useState(null);
-
-  const [state, setState] = useState({
-    showResult: false,
-    apiMessage: "",
-    error: null,
-  });
 
   const {
     user,
@@ -23,6 +14,44 @@ export const ExternalApiComponent = () => {
     loginWithPopup,
     getAccessTokenWithPopup,
   } = useAuth0();
+  const { apiOrigin = "https://ec2-18-222-3-115.us-east-2.compute.amazonaws.com:3001", audience } = getConfig();
+
+  const [userMetadata, setUserMetadata] = useState(null);
+  useEffect(() => {
+  const getUserMetadata = async () => {
+    const domain = process.env.REACT_APP_AUTH0_DOMAIN;
+
+    try {
+      const accessToken = await getAccessTokenSilently({
+        audience: `https://${domain}/api/v2/`,
+      });
+
+      const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
+
+      const metadataResponse = await fetch(userDetailsByIdUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const { user_metadata } = await metadataResponse.json();
+
+      setUserMetadata(user_metadata);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  getUserMetadata();
+}, [getAccessTokenSilently, user.sub]);
+
+  const [state, setState] = useState({
+    showResult: false,
+    apiMessage: "",
+    error: null,
+  });
+
+
 
   const handleConsent = async () => {
     try {
@@ -94,7 +123,6 @@ export const ExternalApiComponent = () => {
 
     const accessToken = await getAccessTokenSilently({
       audience: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/`,
-      scope: "update:users_app_metadata",
     });
 
     console.log(process.env.REACT_APP_AUTH0_DOMAIN);
@@ -105,8 +133,10 @@ export const ExternalApiComponent = () => {
       method: 'PATCH',
       url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
       headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
-      data: {user_metadata: { "user_metadata" : { "POEMS": {"TEST_POEM": "I ONCE WROTE A LIMERICK"} }}}
+      data: {user_metadata: { "user_metadata" : { "PLEASE DEAR CHRIST LET IT STOP": {"I AM ALMOST OUT": "OF TRADER JOES ICED COFFEE"} }}}
     };
+
+
 
     axios.request(options).then(function (response) {
       console.log(response.data);
@@ -161,6 +191,9 @@ export const ExternalApiComponent = () => {
           of the request's `Authorization` header and the API will validate it
           using the API's audience value.
         </p>
+        <img src={user.picture} alt={user.name} />
+        <h2>{user.name}</h2>
+        <p>{user.email}</p>
 
         <h3>User Metadata</h3>
         {userMetadata ? (
