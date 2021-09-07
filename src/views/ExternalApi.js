@@ -145,6 +145,8 @@ export const ExternalApiComponent = () => {
       console.error(error);
     });
 
+    window.location.reload();
+
   };
 
   const handle = (e, fn) => {
