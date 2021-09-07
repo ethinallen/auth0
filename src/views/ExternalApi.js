@@ -104,7 +104,7 @@ export const ExternalApiComponent = () => {
     var options = {
       method: 'PATCH',
       url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
-      headers: {authorization: `Bearer ${accessToken}`, 'content-type': 'application/json'},
+      headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
       data: {user_metadata: { "user_metadata" : { "POEMS": {"TEST_POEM": "I ONCE WROTE A LIMERICK"} }}}
     };
 
