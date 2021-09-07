@@ -19,7 +19,7 @@ export const ExternalApiComponent = () => {
 
 
   const [userMetadata, setUserMetadata] = useState(null);
-  const [pizza , setPizza] = useState('Insert Pizza Here');
+  const [pizza , setPizza] = useState(null);
 
   const handleChange =(e)=>{
       setPizza(e.target.value);
@@ -35,15 +35,13 @@ export const ExternalApiComponent = () => {
       });
 
       const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user.sub}`;
-
+      console.log({"userDetails" : userDetailsByIdUrl});
       const metadataResponse = await fetch(userDetailsByIdUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
       });
 
       const { user_metadata } = await metadataResponse.json();
-
+      console.log({"USER_METADATA" : user_metadata});
       setUserMetadata(user_metadata);
     } catch (e) {
       console.log(e.message);
@@ -145,6 +143,7 @@ export const ExternalApiComponent = () => {
 
     axios.request(options).then(function (response) {
       console.log(response.data);
+
     }).catch(function (error) {
       console.error(error);
     });
@@ -257,7 +256,7 @@ export const ExternalApiComponent = () => {
 
         <form onSubmit={callTestApi}>
           <label >
-          Name:
+          Enter your pizza here:
           </label><br/>
           <input type="text" value={pizza} required onChange={(e)=> {handleChange(e)}} /><br/>
 
