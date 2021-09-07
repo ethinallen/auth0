@@ -136,7 +136,7 @@ export const ExternalApiComponent = () => {
       method: 'PATCH',
       url: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/api/v2/users/${user.sub}`,
       headers: {authorization: `Bearer ${process.env.REACT_APP_AUTH0_TOKEN}`, 'content-type': 'application/json'},
-      data: {user_metadata: {"pizzaPreference" : pizza}}
+      data: {user_metadata: {"pizza_order" : pizza}}
     };
 
 
@@ -184,26 +184,20 @@ export const ExternalApiComponent = () => {
           </Alert>
         )}
 
-        <h1>External API</h1>
+        <h1>Order a Pizza</h1>
         <p className="lead">
-          Ping an external API by clicking the button below.
+          Order a pizza by typing it in the box below.
         </p>
 
         <p>
-          This will call a local API on port 3001 that would have been started
-          if you run <code>npm run dev</code>. An access token is sent as part
-          of the request's `Authorization` header and the API will validate it
-          using the API's audience value.
+          After clicking the `Order Pizza` button, you can refresh the page and confirm the order that was recieved.
         </p>
-        <img src={user.picture} alt={user.name} />
-        <h2>{user.name}</h2>
-        <p>{user.email}</p>
 
         <h3>User Metadata</h3>
         {userMetadata ? (
           <pre>{JSON.stringify(userMetadata, null, 2)}</pre>
         ) : (
-          "No user metadata defined"
+          <pre>"No Pizza Orders (yet!)"</pre>
         )}
 
         {!audience && (
