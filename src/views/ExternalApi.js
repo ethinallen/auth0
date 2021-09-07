@@ -18,7 +18,7 @@ export const ExternalApiComponent = () => {
 
 
   const [userMetadata, setUserMetadata] = useState(null);
-  const [pizza , setPizza] = useState(null);
+  const [pizza , setPizza] = useState('Your Pizza Here');
 
   const handleChange =(e)=>{
       setPizza(e.target.value);
@@ -140,13 +140,10 @@ export const ExternalApiComponent = () => {
 
     axios.request(options).then(function (response) {
       console.log(response.data);
-
+      window.location.reload();
     }).catch(function (error) {
       console.error(error);
     });
-
-    window.location.reload();
-
   };
 
   const handle = (e, fn) => {
